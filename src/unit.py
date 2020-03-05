@@ -23,7 +23,13 @@ class TestGetCombosRecursive(unittest.TestCase):
         r = sorted(r)
 
         expected = [
+            ['Μαρίαν', 'ό Ἰωάννης', 'ὰγαπᾷ'],
+            ['Μαρίαν', 'Ἰωάννης', 'ὰγαπᾷ'],
+            ['Μαρίαν', 'ὰγαπᾷ', 'ό Ἰωάννης'],
+            ['Μαρίαν', 'ὰγαπᾷ', 'Ἰωάννης'],
+            ['ό Ἰωάννης', 'Μαρίαν', 'ὰγαπᾷ'],
             ['ό Ἰωάννης', 'ὰγαπᾷ', 'Μαρίαν'],
+            ['Ἰωάννης', 'Μαρίαν', 'ὰγαπᾷ'],
             ['Ἰωάννης', 'ὰγαπᾷ', 'Μαρίαν'],
             ['ὰγαπᾷ', 'Μαρίαν', 'ό Ἰωάννης'],
             ['ὰγαπᾷ', 'Μαρίαν', 'Ἰωάννης'],
@@ -59,6 +65,7 @@ class TestGetCombosRecursive(unittest.TestCase):
         r = get_new_combos_recursive([['A', ['B', 'B\'']], 'C'])
 
         r = sorted(r)
+        print(r)
 
         expected = [
             ['A', 'C'],
@@ -72,17 +79,35 @@ class TestGetCombosRecursive(unittest.TestCase):
         self.assertEqual(r, expected)
 
     def test_get_new_combos_recursive_both_sides(self):
-        r = get_new_combos_recursive([['A', 'A\''], 'B', ['C', 'C\'']])
+        r = get_new_combos_recursive([['A', 'a'], 'B', ['C', 'c']])
 
         r = sorted(r)
 
         expected = [
-            ['A', 'C'],
-            ['B', 'C'],
-            ["B'", 'C'],
-            ['C', 'A'],
-            ['C', 'B'],
-            ['C', "B'"]
+            ['A', 'B', 'C'],
+            ['A', 'B', 'c'],
+            ['A', 'C', 'B'],
+            ['A', 'c', 'B'],
+            ['B', 'A', 'C'],
+            ['B', 'A', 'c'],
+            ['B', 'C', 'A'],
+            ['B', 'C', 'a'],
+            ['B', 'a', 'C'],
+            ['B', 'a', 'c'],
+            ['B', 'c', 'A'],
+            ['B', 'c', 'a'],
+            ['C', 'A', 'B'],
+            ['C', 'B', 'A'],
+            ['C', 'B', 'a'],
+            ['C', 'a', 'B'],
+            ['a', 'B', 'C'],
+            ['a', 'B', 'c'],
+            ['a', 'C', 'B'],
+            ['a', 'c', 'B'],
+            ['c', 'A', 'B'],
+            ['c', 'B', 'A'],
+            ['c', 'B', 'a'],
+            ['c', 'a', 'B']
         ]
 
         self.assertEqual(r, expected)
