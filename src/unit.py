@@ -1,6 +1,91 @@
 
-from variation_builder import get_new_combo, get_new_combos, uniqify_list_of_lists
+from variation_builder import get_new_combo, get_new_combos, uniqify_list_of_lists, is_list_not_str, is_list_of_lists, get_new_combos_recursive, is_scalar, convert_to_string
 import unittest
+
+class TestIsList(unittest.TestCase):
+    def test_is_list_not_str(self):
+        self.assertTrue(is_list_not_str([]))
+        self.assertFalse(is_list_not_str('asd'))
+
+    def test_is_list_of_lists(self):
+        self.assertFalse(is_list_of_lists([]))
+        self.assertTrue(is_list_of_lists([['a'], ['b']]))
+        self.assertFalse(is_list_of_lists(['a', 'b']))
+
+    def test_is_scalar(self):
+        self.assertFalse(is_scalar([]))
+        self.assertFalse(is_scalar([['a'], ['b']]))
+        self.assertTrue(is_scalar('asd'))
+
+class TestGetCombosRecursive(unittest.TestCase):
+    def test_get_new_combos_recursive(self):
+        r = get_new_combos_recursive([['Ἰωάννης', 'ό Ἰωάννης'], 'ὰγαπᾷ', 'Μαρίαν'])
+        r = sorted(r)
+
+        expected = [
+            ['ό Ἰωάννης', 'ὰγαπᾷ', 'Μαρίαν'],
+            ['Ἰωάννης', 'ὰγαπᾷ', 'Μαρίαν'],
+            ['ὰγαπᾷ', 'Μαρίαν', 'ό Ἰωάννης'],
+            ['ὰγαπᾷ', 'Μαρίαν', 'Ἰωάννης'],
+            ['ὰγαπᾷ', 'ό Ἰωάννης', 'Μαρίαν'],
+            ['ὰγαπᾷ', 'Ἰωάννης', 'Μαρίαν']
+        ]
+
+        self.assertEqual(r, expected)
+
+    def test_get_new_combos_wallace(self):
+        combinations = [
+            ['Ἰωάννης', 'ό Ἰωάννης'],
+            'ὰγαπᾷ',
+            ['Μαρίαν', 'τὴν Μαρίαν']
+        ]
+        r = get_new_combos_recursive(combinations)
+        r = sorted(r)
+
+        self.assertEqual(len(r), 24)
+
+    def test_get_new_combos_wallace_2(self):
+        combinations = [
+            ['Ἰωάννης', 'ό Ἰωάννης', 'Ἰωάνης', 'ό Ἰωάνης'],
+            'ὰγαπᾷ',
+            ['Μαρίαν', 'τὴν Μαρίαν']
+        ]
+        r = get_new_combos_recursive(combinations)
+        r = sorted(r)
+
+        self.assertEqual(len(r), 48)
+
+    def test_get_new_combos_recursive_nested(self):
+        r = get_new_combos_recursive([['A', ['B', 'B\'']], 'C'])
+
+        r = sorted(r)
+
+        expected = [
+            ['A', 'C'],
+            ['B', 'C'],
+            ["B'", 'C'],
+            ['C', 'A'],
+            ['C', 'B'],
+            ['C', "B'"]
+        ]
+
+        self.assertEqual(r, expected)
+
+    def test_get_new_combos_recursive_both_sides(self):
+        r = get_new_combos_recursive([['A', 'A\''], 'B', ['C', 'C\'']])
+
+        r = sorted(r)
+
+        expected = [
+            ['A', 'C'],
+            ['B', 'C'],
+            ["B'", 'C'],
+            ['C', 'A'],
+            ['C', 'B'],
+            ['C', "B'"]
+        ]
+
+        self.assertEqual(r, expected)
 
 class TestGetNewCombos(unittest.TestCase):
     def test_get_new_combos_greek(self):
