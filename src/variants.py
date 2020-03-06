@@ -1,8 +1,20 @@
 # -*- coding: utf-8 -*-
+import re
 from variation_builder import get_new_combos_recursive, convert_to_string
 
 # This computes the variations possible of the koine Greek that would still be translated as "John loves Mary"
 # See https://www.youtube.com/watch?v=ECdq5yv7HOc 
+
+DROP_THESE = re.compile('^(((μὲν)|(τε)).*)|(.*((μὲν)|(τε)))$')
+
+def drop_bad_conjunctions(entries):
+    new_list = []
+
+    for entry in entries:
+        if not DROP_THESE.match(entry):
+            new_list.append(entry)
+
+    return new_list
 
 def remove_overlap(a, b):
     a = set(a)
