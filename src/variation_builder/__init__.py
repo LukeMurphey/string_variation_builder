@@ -48,6 +48,9 @@ def is_scalar(obj):
     
     return True
 
+def filter_nones(entries):
+    return [entry for entry in entries if entry is not None]
+
 def get_new_combos_recursive(policy):
     """
     This function will flatten the lists by resolving the internal lists to an array.
@@ -71,16 +74,16 @@ def get_new_combos_recursive(policy):
         # Flatten the list of lists
         elif is_list_of_lists(entry):
             flattened_entry = get_new_combos_recursive(entry)
-            print('flattened_entry:', flattened_entry)
-            print('from:', entry, '\n\n')
+            # print('flattened_entry:', flattened_entry)
+            # print('from:', entry, '\n\n')
             flattened_policies.extend(flattened_entry) # TODO Possibly wrong?
-            print('flattened_policies: ', flattened_policies, '!\n\n')
+            # print('flattened_policies: ', flattened_policies, '!\n\n')
 
         elif is_list_not_str(entry):
             flattened_policies.append(entry)
 
-    print('scalars: %r' % scalars, '\n')
-    print('flattened_policies: %r' % flattened_policies, '\n\n')
+    # print('scalars: %r' % scalars, '\n')
+    # print('flattened_policies: %r' % flattened_policies, '\n\n')
 
     # The list should now just include single depth lists in flattened_policies
     # Apply them to the scalars to get the completed lists
@@ -93,47 +96,25 @@ def get_new_combos_recursive(policy):
         computed = get_new_combos(flattened_policy, last_combos)
         # computed = get_new_combos(flattened_policy, [scalars])
 
-        print("new combos:", computed, "\n\t\tfrom", flattened_policy, "\n\t\tand", last_combos)
+        # # print("new combos:", computed, "\n\t\tfrom", flattened_policy, "\n\t\tand", last_combos)
         combos.extend(computed)
         last_combos = computed
 
     for scalar in scalars:
         computed = get_new_combos([scalar], last_combos)
-        # computed = get_new_combos(flattened_policy, [scalars])
 
-        print("new combos:", computed, "\n\t\tfrom", scalar)
+        # # print("new combos:", computed, "\n\t\tfrom", scalar)
         combos.extend(computed)
         last_combos = computed
 
     combos = last_combos
-    """
-    combos = []
 
-    for i in range(1, len(flattened_policies)):
-        prior_policy = flattened_policies[i-1]
-        current_policy = flattened_policies[i]
+    # Filter out Nones which are allowed for optional entries
+    filtered = []
+    for sublist in combos:
+        filtered.append(filter_nones(sublist))
 
-        for prior_entry in prior_policy:
-            # Multiply each entry from the prior policy with the next one
-            for current_entry in current_policy:
-                combos.extend(get_new_combos())
-    """
-
-    """
-    combos = []
-    for flattened_policy in flattened_policies:
-        temp_combo = []
-
-        # TODO: This is not doing what I want. It currently isn't making the combinations correctly.
-        # I suspect I have the argument order wrong somewhere
-        computed = get_new_combos(scalars, [flattened_policy])
-        # computed = get_new_combos(flattened_policy, [scalars])
-
-        print("new combos:", computed, "from", flattened_policy, "and", scalars)
-
-        temp_combo.extend(computed)
-        combos.extend(computed)
-    """
+    combos = filtered
 
     # Uniqueify the list and return it
     return uniqify_list_of_lists(combos)
@@ -228,3 +209,5 @@ def make_variants(current_combination, variants):
     
     for next_variants in variants:
         new_variants = make_variants(current_combination, next_variants)
+
+

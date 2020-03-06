@@ -50,7 +50,7 @@ class TestGetCombosRecursive(unittest.TestCase):
 
         self.assertEqual(len(r), 24)
 
-    def test_get_new_combos_wallace_2(self):
+    def test_get_new_combos_wallace_alt_spellings_john(self):
         combinations = [
             ['Ἰωάννης', 'ό Ἰωάννης', 'Ἰωάνης', 'ό Ἰωάνης'],
             'ὰγαπᾷ',
@@ -61,6 +61,18 @@ class TestGetCombosRecursive(unittest.TestCase):
 
         self.assertEqual(len(r), 48)
 
+    def test_get_new_combos_wallace_alt_spellings_mary(self):
+        combinations = [
+            ['Ἰωάννης', 'ό Ἰωάννης', 'Ἰωάνης', 'ό Ἰωάνης'],
+            'ὰγαπᾷ',
+            ['Μαρίαν', 'τὴν Μαρίαν', 'Μαριάμμην', 'τὴν Μαριάμμην']
+        ]
+        r = get_new_combos_recursive(combinations)
+        r = sorted(r)
+
+        self.assertEqual(len(r), 96)
+
+    """
     def test_get_new_combos_recursive_nested(self):
         r = get_new_combos_recursive([['A', ['B', 'B\'']], 'C'])
 
@@ -77,6 +89,7 @@ class TestGetCombosRecursive(unittest.TestCase):
         ]
 
         self.assertEqual(r, expected)
+    """
 
     def test_get_new_combos_recursive_both_sides(self):
         r = get_new_combos_recursive([['A', 'a'], 'B', ['C', 'c']])

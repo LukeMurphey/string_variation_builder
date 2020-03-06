@@ -1,48 +1,54 @@
 # -*- coding: utf-8 -*-
+from variation_builder import get_new_combos_recursive, convert_to_string
+
+# This computes the variations possible of the koine Greek that would still be translated as "John loves Mary"
+# See https://www.youtube.com/watch?v=ECdq5yv7HOc 
+
+def remove_overlap(a, b):
+    a = set(a)
+    b = set(b)
+    return a.difference(b)
+
+# Get the basics
 combinations = [
     ['Ἰωάννης', 'ό Ἰωάννης'],
     'ὰγαπᾷ',
     ['Μαρίαν', 'τὴν Μαρίαν']
 ]
+basic = get_new_combos_recursive(combinations)
+basic = convert_to_string(sorted(basic))
 
-def get_new_combos(current_combinations, new_string):
-    # Here is the list of new combinations
-    new_combos = []
+# Now get the ones with alternative spellings of John
+combinations_john = [
+    ['Ἰωάννης', 'ό Ἰωάννης', 'Ἰωάνης', 'ό Ἰωάνης'],
+    'ὰγαπᾷ',
+    ['Μαρίαν', 'τὴν Μαρίαν']
+]
+spelling_john = get_new_combos_recursive(combinations_john)
+spelling_john = convert_to_string(sorted(spelling_john))
+spelling_john = remove_overlap(spelling_john, basic)
 
-    # Make new combinations of the existing combinations
-    for combo in current_combinations:
-        new_combo = combo.copy()
-        
-        for i in range(0, len(combo)):
-            new_combo = combo.copy()
+# Now get the ones with alternative spellings of Mary
+combinations_mary = [
+    ['Ἰωάννης', 'ό Ἰωάννης', 'Ἰωάνης', 'ό Ἰωάνης'],
+    'ὰγαπᾷ',
+    ['Μαρίαν', 'τὴν Μαρίαν', 'Μαριάμμην', 'τὴν Μαριάμμην']
+]
+spelling_mary = get_new_combos_recursive(combinations_mary)
+spelling_mary = convert_to_string(sorted(spelling_mary))
+spelling_mary = remove_overlap(spelling_mary, spelling_john)
+spelling_mary = remove_overlap(spelling_mary, basic)
 
-    return new_combos
+# Output them
+import csv
+with open('variants.csv', 'w', newline='') as csvfile:
+    varwriter = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
 
-def get_new_combo(current_combination, new_string):
-    new_combos = []
+    for row in basic:
+        varwriter.writerow([row])
 
-    for i in range(0, len(current_combination) + 1):
-        new_combo = current_combination.copy()
+    for row in spelling_john:
+        varwriter.writerow([row])
 
-        # If this is past the end, then add it to the end
-        if i > len(current_combination):
-            new_combo.append(new_string)
-        else:
-            new_combo.insert(i, new_string)
-        
-        new_combos.append(new_combo)
-
-    return new_combos
-
-def make_variants(current_combination, variants):
-    if isinstance(variants, str):
-        return [variants]
-    
-    for next_variants in variants:
-        new_variants = make_variants(current_combination, next_variants)
-
-#for variant in make_variants(combinations):
-#    print(variant)
-
-
-test_get_new_combo()
+    for row in spelling_mary:
+        varwriter.writerow([row])
