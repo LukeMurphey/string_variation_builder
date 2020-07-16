@@ -21,14 +21,25 @@ def remove_overlap(a, b):
     b = set(b)
     return a.difference(b)
 
-# Get the basics
+# Basic ordering differences only
 combinations = [
+    ['Ἰωάννης'],
+    'ὰγαπᾷ',
+    ['Μαρίαν']
+]
+
+ordering_only = get_new_combos_recursive(combinations)
+ordering_only = convert_to_string(sorted(ordering_only))
+
+# With articles
+combinations_articles = [
     ['Ἰωάννης', 'ό Ἰωάννης'],
     'ὰγαπᾷ',
     ['Μαρίαν', 'τὴν Μαρίαν']
 ]
-basic = get_new_combos_recursive(combinations)
-basic = convert_to_string(sorted(basic))
+
+with_articles = get_new_combos_recursive(combinations_articles)
+with_articles = convert_to_string(sorted(with_articles))
 
 # Now get the ones with alternative spellings of John
 combinations_john = [
@@ -38,7 +49,7 @@ combinations_john = [
 ]
 spelling_john = get_new_combos_recursive(combinations_john)
 spelling_john = convert_to_string(sorted(spelling_john))
-spelling_john = remove_overlap(spelling_john, basic)
+spelling_john = remove_overlap(spelling_john, with_articles)
 
 # Now get the ones with alternative spellings of Mary
 combinations_mary = [
@@ -49,14 +60,14 @@ combinations_mary = [
 spelling_mary = get_new_combos_recursive(combinations_mary)
 spelling_mary = convert_to_string(sorted(spelling_mary))
 spelling_mary = remove_overlap(spelling_mary, spelling_john)
-spelling_mary = remove_overlap(spelling_mary, basic)
+spelling_mary = remove_overlap(spelling_mary, with_articles)
 
 # Output them
 import csv
 with open('variants.csv', 'w', newline='') as csvfile:
     varwriter = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
 
-    for row in basic:
+    for row in with_articles:
         varwriter.writerow([row])
 
     for row in spelling_john:
